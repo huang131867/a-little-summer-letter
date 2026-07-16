@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import type { CSSProperties, MouseEvent } from "react";
+import type { CSSProperties, MouseEvent, PointerEvent as ReactPointerEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type VarStyle = CSSProperties & Record<`--${string}`, string>;
@@ -15,27 +15,27 @@ function assetPath(path: string) {
 const featuredPhotos = [
   {
     src: "/photos/gift/hero-flower.jpg",
-    title: "花墙前的小太阳",
-    note: "她站在一片热闹的颜色里，还是最先被看见的那一束光。",
-    tone: "FLOWER LIGHT",
+    title: "花墙前的你",
+    note: "颜色很热闹，你更亮。",
+    tone: "FLOWER",
   },
   {
     src: "/photos/gift/aquarium-blue.jpg",
-    title: "蓝色海底隧道",
-    note: "水光在旁边游，她安静站着，像把夏天降了噪。",
-    tone: "AQUARIUM BLUE",
+    title: "海蓝色的你",
+    note: "鱼群在游，镜头只想停在你这里。",
+    tone: "BLUE",
   },
   {
     src: "/photos/gift/gallery-close.jpg",
-    title: "美术馆里的一秒",
-    note: "身后有很多画，但镜头最偏心。",
-    tone: "SOFT GALLERY",
+    title: "展厅里的你",
+    note: "那么多画里，我还是先看你。",
+    tone: "GALLERY",
   },
   {
     src: "/photos/gift/lake-profile.jpg",
-    title: "湖边侧脸",
-    note: "风、湖水和树影，都在悄悄变得温柔。",
-    tone: "LAKE BREEZE",
+    title: "湖边的你",
+    note: "风慢下来，连水面都温柔一点。",
+    tone: "LAKE",
   },
 ];
 
@@ -43,36 +43,36 @@ const memoryChapters = [
   {
     key: "study",
     label: "认真",
-    title: "她认真起来的时候，世界会安静一点",
-    text: "那些笔记、课本和低头的一瞬间，不是普通日常，是她努力生活的证据。",
+    title: "你认真起来，世界会安静一点",
+    text: "低头写字、翻书、想事情的瞬间，都很值得被留下。",
     image: "/photos/gift/study-candid.jpg",
   },
   {
-    key: "mirror",
+    key: "cute",
     label: "可爱",
-    title: "镜子偷偷保存了很多可爱的她",
-    text: "有时候是黄色上衣，有时候是小小自拍。每一次都像在说：今天也值得被喜欢。",
+    title: "你可爱起来，完全不讲道理",
+    text: "自拍、皱脸、偷笑、小表情，每一张都很犯规。",
     image: "/photos/gift/mirror-yellow.jpg",
   },
   {
     key: "blue",
     label: "海蓝",
-    title: "水族馆给她打了一层蓝色柔光",
-    text: "鱼群、玻璃、海水和她，都被放进同一个发光的下午。",
+    title: "你站在蓝色里，像一小束光",
+    text: "水族馆很大，但这个下午被你变得很近。",
     image: "/photos/gift/together-aquarium.jpg",
   },
   {
-    key: "gallery",
+    key: "art",
     label: "艺术",
-    title: "她在展厅里，也像一张被认真收藏的画",
-    text: "灯箱和镜面把世界照得很满，但她的眼神让画面有了中心。",
+    title: "你在展厅里，也像被收藏的一帧",
+    text: "灯箱、镜面、画框都很好看，但你是中心。",
     image: "/photos/gift/gallery-polished.jpg",
   },
   {
-    key: "together",
+    key: "us",
     label: "我们",
-    title: "还有一些地方，是两个人一起记住的",
-    text: "风景会变，天气会变，可是并肩的那一小段时间会留下来。",
+    title: "一起走过的地方，也会发光",
+    text: "风景会换，天气会换，和你在一起的那一段不会。",
     image: "/photos/gift/together-view.jpg",
   },
 ];
@@ -88,19 +88,19 @@ const galleryPhotos = [
   "/photos/gift/gallery-polished.jpg",
 ];
 
-const moodLines = [
-  "今天的小小她：正在偷偷把好运塞进你的口袋。",
-  "今天的小小她：比了一个很轻的心，假装不是故意的。",
-  "今天的小小她：把夏天折成一封信，放在你手心。",
-  "今天的小小她：认真营业，负责让普通日子变可爱。",
+const companionLines = [
+  "你的小小分身：正在认真营业。",
+  "你的小小分身：靠近鼠标会偷偷发光。",
+  "你的小小分身：今天也很可爱。",
+  "你的小小分身：把好心情递给你。",
 ];
 
-const jarNotes = [
-  "你不用一直闪闪发光，站在那里就已经很好。",
-  "我喜欢你认真，也喜欢你可爱得不讲道理。",
-  "想把好天气、晚风和小小的好运都分给你。",
-  "以后每个夏天，都要有值得期待的事。",
-  "如果今天有一点累，就先被温柔接住。",
+const heartNotes = [
+  "你不用一直发光，你站在那里就很好。",
+  "你认真时好看，可爱时更犯规。",
+  "希望今天的风也偏心你一点。",
+  "想把好天气和好运都分给你。",
+  "你值得很多很多温柔。",
 ];
 
 type Pointer = {
@@ -137,6 +137,17 @@ function CursorMagic({
           } as VarStyle
         }
       />
+      <div
+        className={pointer.ready ? "cursor-heart visible" : "cursor-heart"}
+        style={
+          {
+            "--cursor-x": `${pointer.x}px`,
+            "--cursor-y": `${pointer.y}px`,
+          } as VarStyle
+        }
+      >
+        ♥
+      </div>
       <div className="sparkle-layer" aria-hidden="true">
         {sparkles.map((sparkle) => (
           <span
@@ -160,85 +171,104 @@ function CursorMagic({
   );
 }
 
-function ChibiCompanion({
+function PhotoCompanion({
   pointer,
   onMagic,
 }: {
   pointer: Pointer;
   onMagic: (x: number, y: number, count?: number) => void;
 }) {
-  const [moodIndex, setMoodIndex] = useState(0);
+  const [lineIndex, setLineIndex] = useState(0);
   const width = typeof window === "undefined" ? 1 : window.innerWidth || 1;
   const height = typeof window === "undefined" ? 1 : window.innerHeight || 1;
-  const lookX = pointer.ready ? (pointer.x / width - 0.5) * 9 : 0;
-  const lookY = pointer.ready ? (pointer.y / height - 0.5) * 5 : 0;
-  const mood = moodLines[moodIndex];
+  const moveX = pointer.ready ? (pointer.x / width - 0.5) * 20 : 0;
+  const moveY = pointer.ready ? (pointer.y / height - 0.5) * 14 : 0;
+  const rotate = pointer.ready ? (pointer.x / width - 0.5) * 8 : 0;
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    const next = (moodIndex + 1) % moodLines.length;
-    setMoodIndex(next);
-    onMagic(event.clientX, event.clientY, 14);
+    setLineIndex((lineIndex + 1) % companionLines.length);
+    onMagic(event.clientX, event.clientY, 22);
   };
 
   return (
     <section className="companion-section" id="companion" aria-labelledby="companion-title">
       <div className="companion-copy reveal">
-        <p className="section-kicker">A TINY VERSION OF HER</p>
-        <h2 id="companion-title">把不好看的建模，换成一只小小的她。</h2>
-        <p>
-          她会跟着鼠标轻轻转头，也会在被点到的时候冒出一串小心心。不是硬邦邦的模型，
-          是一只藏着夏天、信封和蓝色外套的 Q 版分身。
-        </p>
-        <div className="companion-note">{mood}</div>
+        <p className="section-kicker">MINI YOU</p>
+        <h2 id="companion-title">这里是小小真人版的你。</h2>
+        <p>头像来自真实照片，身体做成 Q 版贴纸。它会跟着鼠标靠近，点一下会冒心。</p>
+        <div className="companion-note">{companionLines[lineIndex]}</div>
       </div>
 
       <button
-        className="chibi-stage reveal"
+        className="photo-companion-stage reveal magnetic-card"
         type="button"
         onClick={handleClick}
-        aria-label="让 Q 版小小她发光"
+        aria-label="点亮小小真人版的你"
+        style={
+          {
+            "--move-x": `${moveX}px`,
+            "--move-y": `${moveY}px`,
+            "--rotate": `${rotate}deg`,
+          } as VarStyle
+        }
       >
-        <span className="stage-sun" />
-        <span className="stage-letter">♡</span>
-        <span className="stage-star star-a">✦</span>
-        <span className="stage-star star-b">✧</span>
-        <span
-          className="chibi"
-          style={
-            {
-              "--look-x": `${lookX}px`,
-              "--look-y": `${lookY}px`,
-            } as VarStyle
-          }
-        >
-          <span className="chibi-shadow" />
-          <span className="chibi-hair back" />
-          <span className="chibi-head">
-            <span className="chibi-bangs bang-a" />
-            <span className="chibi-bangs bang-b" />
-            <span className="chibi-bangs bang-c" />
-            <span className="chibi-eye eye-left" />
-            <span className="chibi-eye eye-right" />
-            <span className="chibi-blush blush-left" />
-            <span className="chibi-blush blush-right" />
-            <span className="chibi-mouth" />
-          </span>
-          <span className="chibi-hair side-left" />
-          <span className="chibi-hair side-right" />
-          <span className="chibi-body">
-            <span className="chibi-shirt" />
-            <span className="chibi-jacket left" />
-            <span className="chibi-jacket right" />
-            <span className="chibi-necklace" />
-          </span>
-          <span className="chibi-arm arm-left" />
-          <span className="chibi-arm arm-right">
-            <span className="finger one" />
-            <span className="finger two" />
-          </span>
-          <span className="chibi-leg leg-left" />
-          <span className="chibi-leg leg-right" />
-        </span>
+        <span className="stage-orbit orbit-one" />
+        <span className="stage-orbit orbit-two" />
+        <span className="stage-floating-heart heart-one">♥</span>
+        <span className="stage-floating-heart heart-two">♡</span>
+        <img
+          className="photo-companion"
+          src={assetPath("/photos/gift/chibi-companion.png")}
+          alt="小小真人版的你"
+          draggable={false}
+        />
+      </button>
+    </section>
+  );
+}
+
+function HeartReactor({
+  pointer,
+  onMagic,
+}: {
+  pointer: Pointer;
+  onMagic: (x: number, y: number, count?: number) => void;
+}) {
+  const [charge, setCharge] = useState(0);
+  const note = heartNotes[charge % heartNotes.length];
+  const width = typeof window === "undefined" ? 1 : window.innerWidth || 1;
+  const height = typeof window === "undefined" ? 1 : window.innerHeight || 1;
+  const pullX = pointer.ready ? (pointer.x / width - 0.5) * 26 : 0;
+  const pullY = pointer.ready ? (pointer.y / height - 0.5) * 18 : 0;
+
+  return (
+    <section className="heart-section reveal" aria-labelledby="heart-title">
+      <div className="heart-copy">
+        <p className="section-kicker">MOUSE REACTION</p>
+        <h2 id="heart-title">靠近这里，页面会偏向你。</h2>
+        <p>{note}</p>
+      </div>
+      <button
+        type="button"
+        className="heart-reactor magnetic-card"
+        aria-label="点亮心动反应"
+        onClick={(event) => {
+          setCharge(charge + 1);
+          onMagic(event.clientX, event.clientY, 26);
+        }}
+        style={
+          {
+            "--pull-x": `${pullX}px`,
+            "--pull-y": `${pullY}px`,
+            "--charge": `${Math.min(charge, 8)}`,
+          } as VarStyle
+        }
+      >
+        <span className="heart-ring ring-a" />
+        <span className="heart-ring ring-b" />
+        <span className="heart-ring ring-c" />
+        <span className="heart-core">♥</span>
+        <span className="heart-count">{String(charge + 1).padStart(2, "0")}</span>
       </button>
     </section>
   );
@@ -248,44 +278,62 @@ export function GiftExperience() {
   const [pointer, setPointer] = useState<Pointer>({ x: 0, y: 0, ready: false });
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const [activeChapter, setActiveChapter] = useState(memoryChapters[0]);
-  const [jarIndex, setJarIndex] = useState(0);
-  const [letterOpen, setLetterOpen] = useState(false);
+  const [letterOpen, setLetterOpen] = useState(true);
   const [progress, setProgress] = useState(0);
   const sparkleId = useRef(0);
   const lastTrail = useRef(0);
 
   const addSparkles = useCallback((x: number, y: number, count = 1) => {
-    const glyphs = ["♡", "✦", "✧"];
+    const glyphs = ["♥", "♡", "✦", "✧", "花"];
     const next = Array.from({ length: count }, (_, index) => {
-      const angle = (Math.PI * 2 * index) / count + Math.random() * 0.6;
-      const distance = 18 + Math.random() * 54;
+      const angle = (Math.PI * 2 * index) / count + Math.random() * 0.8;
+      const distance = 20 + Math.random() * 74;
       return {
         id: sparkleId.current++,
         x,
         y,
         dx: Math.cos(angle) * distance,
-        dy: Math.sin(angle) * distance - 18,
+        dy: Math.sin(angle) * distance - 22,
         glyph: glyphs[Math.floor(Math.random() * glyphs.length)],
-        rotate: -30 + Math.random() * 60,
+        rotate: -45 + Math.random() * 90,
       };
     });
-    setSparkles((current) => [...current.slice(-70), ...next]);
+    setSparkles((current) => [...current.slice(-90), ...next]);
     window.setTimeout(() => {
       const ids = new Set(next.map((sparkle) => sparkle.id));
       setSparkles((current) => current.filter((sparkle) => !ids.has(sparkle.id)));
     }, 1100);
   }, []);
 
+  const handleMagnetMove = useCallback((event: ReactPointerEvent<HTMLElement>) => {
+    const target = event.currentTarget;
+    const rect = target.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const rx = x / rect.width - 0.5;
+    const ry = y / rect.height - 0.5;
+    target.style.setProperty("--glow-x", `${x}px`);
+    target.style.setProperty("--glow-y", `${y}px`);
+    target.style.setProperty("--tilt-x", `${-ry * 7}deg`);
+    target.style.setProperty("--tilt-y", `${rx * 9}deg`);
+  }, []);
+
+  const handleMagnetLeave = useCallback((event: ReactPointerEvent<HTMLElement>) => {
+    const target = event.currentTarget;
+    target.style.setProperty("--tilt-x", "0deg");
+    target.style.setProperty("--tilt-y", "0deg");
+  }, []);
+
   useEffect(() => {
     const onPointerMove = (event: PointerEvent) => {
       setPointer({ x: event.clientX, y: event.clientY, ready: true });
       const now = performance.now();
-      if (now - lastTrail.current > 95) {
+      if (now - lastTrail.current > 56) {
         lastTrail.current = now;
         addSparkles(event.clientX, event.clientY, 1);
       }
     };
-    const onPointerDown = (event: PointerEvent) => addSparkles(event.clientX, event.clientY, 9);
+    const onPointerDown = (event: PointerEvent) => addSparkles(event.clientX, event.clientY, 12);
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerdown", onPointerDown, { passive: true });
     return () => {
@@ -318,11 +366,11 @@ export function GiftExperience() {
 
   const floatingPetals = useMemo(
     () =>
-      Array.from({ length: 18 }, (_, index) => ({
-        "--left": `${4 + ((index * 17) % 92)}%`,
-        "--delay": `${(index * 0.47) % 7}s`,
-        "--duration": `${8 + (index % 5) * 1.35}s`,
-        "--size": `${9 + (index % 4) * 4}px`,
+      Array.from({ length: 24 }, (_, index) => ({
+        "--left": `${3 + ((index * 13) % 94)}%`,
+        "--delay": `${(index * 0.41) % 7}s`,
+        "--duration": `${7.6 + (index % 6) * 1.2}s`,
+        "--size": `${8 + (index % 5) * 3}px`,
       }) as VarStyle),
     [],
   );
@@ -338,57 +386,50 @@ export function GiftExperience() {
       </div>
 
       <header className="hero" id="top">
-        <img
-          className="hero-photo"
-          src={assetPath("/photos/gift/hero-flower.jpg")}
-          alt="花墙前比耶的女孩"
-        />
+        <img className="hero-photo" src={assetPath("/photos/gift/hero-flower.jpg")} alt="花墙前的你" />
         <div className="hero-vignette" />
-        <nav className="topbar" aria-label="礼物页面导航">
-          <a className="brand" href="#top">A LITTLE SUMMER LETTER</a>
-          <a className="nav-pill" href="#companion">小小她</a>
-          <a className="nav-pill" href="#memories">照片宇宙</a>
-          <a className="nav-pill" href="#letter">最后一封信</a>
+        <nav className="topbar" aria-label="页面导航">
+          <a className="brand" href="#top">SUMMER LETTER</a>
+          <a className="nav-pill" href="#companion">小小你</a>
+          <a className="nav-pill" href="#memories">照片</a>
+          <a className="nav-pill" href="#film">视频</a>
+          <a className="nav-pill" href="#letter">信</a>
         </nav>
         <div className="hero-copy">
-          <p className="eyebrow">FOR THE GIRL WHO MAKES ORDINARY DAYS GLOW</p>
+          <p className="eyebrow">给你，一个会回应鼠标的夏天</p>
           <h1>
-            给你的
-            <span>夏日来信</span>
+            你在的
+            <span>夏日宇宙</span>
           </h1>
-          <p>
-            我把认真、可爱、蓝色水光、花墙和那些一起走过的地方，重新装进这个小小网页。
-          </p>
+          <p>照片、星光、蓝色水族馆、花墙，还有小小真人版的你。</p>
           <div className="hero-actions">
-            <a className="primary-button" href="#memories">打开回忆</a>
-            <a className="ghost-button" href="#companion">看看小小她</a>
+            <a className="primary-button" href="#memories">看照片</a>
+            <a className="ghost-button" href="#letter">读那封信</a>
           </div>
-        </div>
-        <div className="hero-stamp" aria-hidden="true">
-          <span>2026</span>
-          <small>SUMMER<br />ARCHIVE</small>
         </div>
       </header>
 
       <section className="intro-section reveal" aria-labelledby="intro-title">
-        <p className="section-kicker">A PLACE THAT KEEPS ONLY HER</p>
-        <h2 id="intro-title">这一次，照片不再只是排开，而是变成一座会回应她的宇宙。</h2>
-        <p>
-          我把杂乱背景压低，把主体留出来；让光、花瓣、星星和鼠标一起动起来。
-          页面越往下，越像一封慢慢展开的信。
-        </p>
+        <p className="section-kicker">LESS TALK, MORE YOU</p>
+        <h2 id="intro-title">这次少说废话，多放你。</h2>
+        <p>每一屏都围着你转：照片会动，鼠标会发光，小小你会跟着靠近。</p>
       </section>
 
-      <ChibiCompanion pointer={pointer} onMagic={addSparkles} />
+      <PhotoCompanion pointer={pointer} onMagic={addSparkles} />
 
       <section className="feature-section" id="memories" aria-labelledby="feature-title">
         <div className="section-heading reveal">
-          <p className="section-kicker">FOUR WAYS TO REMEMBER HER</p>
-          <h2 id="feature-title">她不是一种样子，她有很多种发光方式。</h2>
+          <p className="section-kicker">PHOTO MOMENTS</p>
+          <h2 id="feature-title">四个瞬间，刚好都是你。</h2>
         </div>
         <div className="feature-grid">
           {featuredPhotos.map((photo, index) => (
-            <article className={`feature-card reveal feature-${index + 1}`} key={photo.src}>
+            <article
+              className={`feature-card reveal magnetic-card feature-${index + 1}`}
+              key={photo.src}
+              onPointerMove={handleMagnetMove}
+              onPointerLeave={handleMagnetLeave}
+            >
               <img src={assetPath(photo.src)} alt={photo.title} loading={index > 1 ? "lazy" : "eager"} />
               <div>
                 <span>{photo.tone}</span>
@@ -402,9 +443,9 @@ export function GiftExperience() {
 
       <section className="chapter-section" aria-labelledby="chapter-title">
         <div className="chapter-copy reveal">
-          <p className="section-kicker">MEMORY CONSTELLATION</p>
-          <h2 id="chapter-title">把她的不同瞬间，点成一张小星图。</h2>
-          <div className="chapter-tabs" role="tablist" aria-label="回忆分类">
+          <p className="section-kicker">FIVE SIDES OF YOU</p>
+          <h2 id="chapter-title">你有很多种好看。</h2>
+          <div className="chapter-tabs" role="tablist" aria-label="照片分类">
             {memoryChapters.map((chapter) => (
               <button
                 key={chapter.key}
@@ -412,7 +453,7 @@ export function GiftExperience() {
                 className={chapter.key === activeChapter.key ? "active" : ""}
                 onClick={(event) => {
                   setActiveChapter(chapter);
-                  addSparkles(event.clientX, event.clientY, 6);
+                  addSparkles(event.clientX, event.clientY, 8);
                 }}
               >
                 {chapter.label}
@@ -420,7 +461,11 @@ export function GiftExperience() {
             ))}
           </div>
         </div>
-        <article className="chapter-display reveal">
+        <article
+          className="chapter-display reveal magnetic-card"
+          onPointerMove={handleMagnetMove}
+          onPointerLeave={handleMagnetLeave}
+        >
           <img src={assetPath(activeChapter.image)} alt={activeChapter.title} />
           <div className="chapter-text">
             <span>{activeChapter.label}</span>
@@ -432,12 +477,17 @@ export function GiftExperience() {
 
       <section className="gallery-section" aria-labelledby="gallery-title">
         <div className="section-heading reveal">
-          <p className="section-kicker">A SMALL PHOTO RIVER</p>
-          <h2 id="gallery-title">一些被认真留下来的她。</h2>
+          <p className="section-kicker">PHOTO RIVER</p>
+          <h2 id="gallery-title">继续往右滑，都是你。</h2>
         </div>
         <div className="photo-river" aria-label="精选照片">
           {galleryPhotos.map((photo, index) => (
-            <figure className="river-card reveal" key={photo}>
+            <figure
+              className="river-card reveal magnetic-card"
+              key={photo}
+              onPointerMove={handleMagnetMove}
+              onPointerLeave={handleMagnetLeave}
+            >
               <img src={assetPath(photo)} alt={`精选照片 ${index + 1}`} loading="lazy" />
               <figcaption>{String(index + 1).padStart(2, "0")}</figcaption>
             </figure>
@@ -445,38 +495,18 @@ export function GiftExperience() {
         </div>
       </section>
 
-      <section className="jar-section reveal" aria-labelledby="jar-title">
-        <div className="jar-copy">
-          <p className="section-kicker">A LITTLE JAR OF TENDERNESS</p>
-          <h2 id="jar-title">每按一次，就多收下一句悄悄话。</h2>
-          <p>{jarNotes[jarIndex]}</p>
-          <button
-            type="button"
-            onClick={(event) => {
-              setJarIndex((jarIndex + 1) % jarNotes.length);
-              addSparkles(event.clientX, event.clientY, 12);
-            }}
-          >
-            再放进一颗喜欢
-          </button>
-        </div>
-        <div className="glass-jar" aria-hidden="true">
-          {jarNotes.map((_, index) => (
-            <span key={index} className={index <= jarIndex ? "lit" : ""} />
-          ))}
-        </div>
-      </section>
+      <HeartReactor pointer={pointer} onMagic={addSparkles} />
 
-      <section className="film-section" aria-labelledby="film-title">
+      <section className="film-section" id="film" aria-labelledby="film-title">
         <div className="film-copy reveal">
-          <p className="section-kicker">A TINY CINEMA</p>
-          <h2 id="film-title">原来的短片也留下，但它现在只是这座宇宙的一颗星。</h2>
-          <p>把耳机戴上，慢慢看。照片会停住，心跳不会。</p>
+          <p className="section-kicker">NEW CUT</p>
+          <h2 id="film-title">视频重新剪了：只保留照片和一点点心跳。</h2>
+          <p>少字、快一点、顺一点，像把这些瞬间串成一小段夏天。</p>
           <a className="ghost-button light" href={assetPath("/video/summer-letter.mp4")} download>
-            保存这支小短片
+            保存视频
           </a>
         </div>
-        <div className="phone-frame reveal">
+        <div className="phone-frame reveal magnetic-card" onPointerMove={handleMagnetMove} onPointerLeave={handleMagnetLeave}>
           <div className="phone-speaker" />
           <video controls playsInline preload="metadata" poster={assetPath("/video/poster.jpg")}>
             <source src={assetPath("/video/summer-letter.mp4")} type="video/mp4" />
@@ -486,34 +516,39 @@ export function GiftExperience() {
       </section>
 
       <section className="letter-section reveal" id="letter" aria-labelledby="letter-title">
-        <p className="section-kicker">THE LAST LITTLE SURPRISE</p>
-        <h2 id="letter-title">最后，还有一封会打开的信。</h2>
+        <p className="section-kicker">A REAL LETTER</p>
+        <h2 id="letter-title">最后这封信，这次一定看得全。</h2>
         <button
           type="button"
-          className={letterOpen ? "envelope open" : "envelope"}
+          className="letter-toggle"
           onClick={(event) => {
             setLetterOpen(!letterOpen);
-            addSparkles(event.clientX, event.clientY, 16);
+            addSparkles(event.clientX, event.clientY, 18);
           }}
           aria-expanded={letterOpen}
           aria-controls="letter-paper"
         >
-          <span className="envelope-back" />
-          <span className="envelope-paper" id="letter-paper">
-            <b>给最特别的你：</b>
-            <em>
-              如果世界偶尔很吵，希望你还记得，有人认真收藏过你每一个可爱的瞬间。
-              你不需要一直闪闪发光，因为你只是站在那里，就已经让普通的一天有了意义。
-              愿你被温柔接住，也愿以后每一个夏天，都有值得期待的事。
-            </em>
-            <strong>被好好爱着，今天也是。</strong>
-          </span>
-          <span className="envelope-front">打开这封信 <i>♡</i></span>
+          {letterOpen ? "收起一点" : "打开信"}
         </button>
+        <article id="letter-paper" className={letterOpen ? "letter-paper-panel open" : "letter-paper-panel"}>
+          <p>给你：</p>
+          <p>
+            我想把这个网页做得更像你一点，不是堆很多漂亮词，而是让每一张照片都被认真看见。
+            你认真、可爱、偶尔发呆，也会在镜头前突然变得很亮。
+          </p>
+          <p>
+            如果今天有一点累，希望你打开这里的时候，能感觉自己被轻轻接住。
+            你不需要一直表现得很好，因为你本来就很好。
+          </p>
+          <p>
+            以后还想和你一起去很多地方，把新的照片、新的视频、新的小瞬间，都慢慢放进来。
+          </p>
+          <strong>你值得被偏心，也值得被好好喜欢。</strong>
+        </article>
       </section>
 
       <footer>
-        <p>MADE WITH PHOTOS, SUMMER LIGHT, AND A VERY BIASED HEART</p>
+        <p>给你。只给你。</p>
         <a href="#top">回到开头</a>
       </footer>
     </main>

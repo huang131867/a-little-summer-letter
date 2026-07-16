@@ -6,11 +6,11 @@ export const metadata: Metadata = {
     default: "给你的夏日来信",
     template: "%s · 给你的夏日来信",
   },
-  description: "一座会发光、会互动、只认真收藏她的夏日照片宇宙。",
+  description: "一座会发光、会互动、只认真收藏你的夏日照片宇宙。",
   applicationName: "给你的夏日来信",
   openGraph: {
     title: "给你的夏日来信",
-    description: "照片、Q版小小她、鼠标星光和一封最后打开的信。",
+    description: "照片、小小真人版的你、鼠标星光和一封完整展开的信。",
     type: "website",
     locale: "zh_CN",
   },

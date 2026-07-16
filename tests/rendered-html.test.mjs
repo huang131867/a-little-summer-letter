@@ -11,10 +11,11 @@ test("describes the finished summer letter site", async () => {
   ]);
 
   assert.match(page, /给你的夏日来信/);
-  assert.match(layout, /夏日照片宇宙/);
+  assert.match(layout, /收藏你的夏日照片宇宙/);
   assert.match(githubIndex, /鼠标星光/);
-  assert.match(experience, /ChibiCompanion/);
-  assert.match(experience, /把不好看的建模/);
+  assert.match(experience, /PhotoCompanion/);
+  assert.match(experience, /小小真人版的你/);
+  assert.match(experience, /这次一定看得全/);
   assert.doesNotMatch(experience, /ChibiViewer|chibi-girl\.glb/);
 });
 
@@ -28,6 +29,7 @@ test("keeps curated gift photos available for the page", async () => {
     "lake-profile.jpg",
     "study-candid.jpg",
     "together-view.jpg",
+    "chibi-companion.png",
   ];
 
   for (const file of required) {
